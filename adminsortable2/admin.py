@@ -414,7 +414,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
         default_order_field = getattr(obj, self.default_order_field, None)
         if default_order_field is None or default_order_field >= 0:
-            query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
+            query_set = self.model.objects.filter(**{self.fk.get_attname(): getattr(self.instance, self.fk.remote_field.field_name)})
             max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
             setattr(obj, self.default_order_field, max_order + 1)
         if commit:
